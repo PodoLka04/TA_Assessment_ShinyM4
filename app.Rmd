@@ -1,0 +1,128 @@
+---
+title: "Копирование интерфейса"
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r}
+library(shiny)
+library(shinyWidgets)
+library(ggplot2)
+library(dplyr)
+
+data = read.csv("TA.csv") %>%
+  mutate(
+    isNative = as.factor(isNative),
+    Instructor = as.factor(Instructor),
+    Course = as.factor(Course),
+    Season = as.factor(Season),
+    Score = as.factor(Score)
+  )
+
+ui = fluidPage(
+  titlePanel("TA Assessment"),
+  sidebarLayout(
+    sidebarPanel(
+      pickerInput(
+        inputId = "instructor",
+        label = "Instructor:",
+        choices = c("", levels(data$Instructor)),
+        selected = ""
+      ),
+      sliderInput(
+        inputId = "class_size",
+        label = "Max class size:",
+        min = 0,
+        max = 70,
+        value = c(0, 40),
+        step = 1
+      ),
+      materialSwitch(
+        inputId = "background_toggle",
+        status = "primary",
+        label = "Delete plot background", 
+        right = TRUE,
+      )
+    ),
+    mainPanel(
+      tabsetPanel(
+        tabPanel("График", plotOutput("score_plot")),
+        tabPanel("Таблица", dataTableOutput("filtered_table"))
+      )
+    )
+  )
+)
+
+server = function(input, output) {
+  filtered_data = reactive({
+    df = data
+    if (input$instructor != "") {
+      df = df %>% filter(Instructor == input$instructor)
+    }
+    df %>% filter(
+      Size >= input$class_size[1], 
+      Size <= input$class_size[2]
+    )
+  })
+  
+  output$score_plot = renderPlot({
+    p = ggplot(filtered_data(), aes(x = Score)) +  #тут бы я через fill добавил параметр какой нибудь типо isNative
+      geom_bar(position = "dodge") +
+      labs(title = "", x = "Score", y = "count") 
+    
+    if (input$background_toggle) {
+      p + theme(
+        panel.background = element_rect(fill = "white"),
+        plot.background = element_rect(fill = "white")
+      )
+    } else {
+      p + theme(
+        panel.background = element_rect(fill = "#f0f0f0"), 
+        plot.background = element_rect(fill = "#f0f0f0")
+      )
+    }
+  })
+  
+  output$filtered_table = renderDataTable(
+    filtered_data(),
+    options = list(
+      dom = 't',          
+      paging = FALSE, #тут пейджинг (нет кнопок "Назад/Вперед ")
+      searching = FALSE, #тут поиск
+      lengthChange = FALSE #тут выбор количесвта показываемых строк
+    )
+  )
+}
+
+shinyApp(ui, server)
+```
+ЗАДАНИЕ:
+
+Повторить интерфейс Shiny-приложения для анализа данных Teaching Assistant (TA) в точности как на скриншоте.
+
+ИНТЕРФЕЙС:
+
+- Заголовок: "TA Assessment"
+- Боковая панель (sidebarPanel):
+   * Выпадающий список "Instructor:" (pickerInput)
+   * Слайдер "Max class size:" со значениями от 0 до 70, по умолчанию 0–40
+   * Переключатель "Delete plot background" (materialSwitch)
+- Основная панель (mainPanel):
+   * Вкладки "График" и "Таблица"
+   * На вкладке "График" — bar chart распределения Score
+   * На вкладке "Таблица" — отфильтрованные данные
+
+ТРЕБОВАНИЯ:
+
+1. Выпадающие списки подтягиваются из данных (не вбиты вручную)
+2. Использовать библиотеку shinyWidgets
+3. При первом входе значения по умолчанию как на скриншоте
+
+ЧТО Я ИЗМЕНИЛ (МОЁ МНЕНИЕ):
+
+1. В график добавить fill = isNative
+2. В таблицу добавить пейджинг и поиск
+3. Добавить фильтры по Season и Course
+
+
