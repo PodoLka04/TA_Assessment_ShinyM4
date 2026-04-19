@@ -39,9 +39,7 @@
 
 ## 🚀 Ссылка на приложение
 
-🔗 **https://dpodolin13.shinyapps.io/onserver/**
-
-> В приложении есть кнопка "Show/hide code" для просмотра кода.
+🔗 **https://dpodolin13.shinyapps.io/ta_assessment_app/**
 
 ## 🛠 Инструменты
 
