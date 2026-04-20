@@ -44,6 +44,7 @@
 | `TA.csv` | Исходные данные |
 | `app.Rmd` | Код приложения |
 | `Задание.png` | Скриншот задания |
+| `Требования к Интерфейсу.pdf` | Конкретный вид и описание интерфейса, который необходимо было повторить|
 
 ## 🚀 Ссылка на приложение
 
@@ -104,6 +105,7 @@ Reproduce the Shiny application interface for Teaching Assistant (TA) data analy
 | `TA.csv` | Source data |
 | `app.Rmd` | Application code |
 | `Задание.png` | Screenshot of the assignment |
+| `Требования к Интерфейсу.pdf` | The specific appearance and description of the interface that had to be replicated.|
 
 ## 🚀 Application link
 
